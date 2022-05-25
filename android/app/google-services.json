@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "356255304914",
+    "project_id": "flutter-learn-zerq",
+    "storage_bucket": "flutter-learn-zerq.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:356255304914:android:f7815f5c0b4a7ce8af310b",
+        "android_client_info": {
+          "package_name": "com.example.learning_dart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "356255304914-cuckt1r1jfqhoa41rcp3o3t8838j3mbp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKR-pNsiqa_QvicvWDW7ZDb_FePh4nphw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "356255304914-cuckt1r1jfqhoa41rcp3o3t8838j3mbp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
