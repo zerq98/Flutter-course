@@ -1,11 +1,8 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:learning_dart/constants/routes.dart';
-import 'package:learning_dart/views/login.dart';
 import '../utilities/errorDialog.dart';
 import '../utilities/redirectDialog.dart';
-import '/firebase_options.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({Key? key}) : super(key: key);
@@ -67,12 +64,10 @@ class _RegisterViewState extends State<RegisterView> {
                     final userCredential = await FirebaseAuth.instance
                         .createUserWithEmailAndPassword(
                             email: email, password: password);
-                    if (userCredential != null) {
-                      await showRedirectDialog(
-                          context,
-                          'Thanks for registration!',
-                          'To log in you need now verify your email address',
-                          verifyRoute);
+                    final user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                      await user.sendEmailVerification();
+                      Navigator.of(context).pushNamed(verifyRoute);
                     }
                   } on FirebaseAuthException catch (e) {
                     var error = '';
