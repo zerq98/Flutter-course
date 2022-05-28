@@ -37,53 +37,57 @@ class _LoginViewState extends State<LoginView> {
           title: Text('Login'),
           backgroundColor: Colors.black,
         ),
-        body: Column(
-          children: [
-            TextField(
-              enableSuggestions: false,
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(hintText: 'Enter your email here'),
-              controller: _email,
-            ),
-            TextField(
-              decoration: InputDecoration(hintText: 'Enter your password here'),
-              controller: _password,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-            ),
-            TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 50),
+          child: Column(
+            children: [
+              TextField(
+                enableSuggestions: false,
+                autocorrect: false,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(hintText: 'Enter your email here'),
+                controller: _email,
+              ),
+              TextField(
+                decoration:
+                    InputDecoration(hintText: 'Enter your password here'),
+                controller: _password,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+              ),
+              TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
 
-                try {
-                  final userCredential = await FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
-                          email: email, password: password);
-                  if (userCredential != null) {
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/home/', (route) => false);
+                  try {
+                    final userCredential = await FirebaseAuth.instance
+                        .signInWithEmailAndPassword(
+                            email: email, password: password);
+                    if (userCredential != null) {
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/home/', (route) => false);
+                    }
+                  } on FirebaseAuthException catch (e) {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                              content: const Text('Wrong email or password'),
+                            ));
                   }
-                } on FirebaseAuthException catch (e) {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                            content: const Text('Wrong email or password'),
-                          ));
-                }
-              },
-              child: Text("Login"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/register/', (route) => false);
-              },
-              child: Text("Not registered yet? Register here!"),
-            )
-          ],
+                },
+                child: Text("Login"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/register/', (route) => false);
+                },
+                child: Text("Not registered yet? Register here!"),
+              )
+            ],
+          ),
         ));
   }
 }

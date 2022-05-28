@@ -36,61 +36,65 @@ class _RegisterViewState extends State<RegisterView> {
           title: Text('Register'),
           backgroundColor: Colors.black,
         ),
-        body: Column(
-          children: [
-            TextField(
-              enableSuggestions: false,
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(hintText: 'Enter your email here'),
-              controller: _email,
-            ),
-            TextField(
-              decoration: InputDecoration(hintText: 'Enter your password here'),
-              controller: _password,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-            ),
-            TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 50),
+          child: Column(
+            children: [
+              TextField(
+                enableSuggestions: false,
+                autocorrect: false,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(hintText: 'Enter your email here'),
+                controller: _email,
+              ),
+              TextField(
+                decoration:
+                    InputDecoration(hintText: 'Enter your password here'),
+                controller: _password,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+              ),
+              TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
 
-                try {
-                  final userCredential = await FirebaseAuth.instance
-                      .createUserWithEmailAndPassword(
-                          email: email, password: password);
-                  if (userCredential != null) {
+                  try {
+                    final userCredential = await FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(
+                            email: email, password: password);
+                    if (userCredential != null) {
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/login/', (route) => false);
+                    }
+                  } on FirebaseAuthException catch (e) {
+                    var error = '';
+
+                    if (e.code == 'email-already-in-use') {
+                      error = 'Email is already in use';
+                    } else if (e.code == 'weak-password') {
+                      error = 'Your password is too weak';
+                    } else if (e.code == 'invalid-email') {
+                      error = 'Please provide a valid email address';
+                    }
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                              content: Text(error),
+                            ));
+                  }
+                },
+                child: Text("Register"),
+              ),
+              TextButton(
+                  onPressed: () {
                     Navigator.of(context)
                         .pushNamedAndRemoveUntil('/login/', (route) => false);
-                  }
-                } on FirebaseAuthException catch (e) {
-                  var error = '';
-
-                  if (e.code == 'email-already-in-use') {
-                    error = 'Email is already in use';
-                  } else if (e.code == 'weak-password') {
-                    error = 'Your password is too weak';
-                  } else if (e.code == 'invalid-email') {
-                    error = 'Please provide a valid email address';
-                  }
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                            content: Text(error),
-                          ));
-                }
-              },
-              child: Text("Register"),
-            ),
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/login/', (route) => false);
-                },
-                child: Text('Already have an account? Log in here!'))
-          ],
+                  },
+                  child: Text('Already have an account? Log in here!'))
+            ],
+          ),
         ));
   }
 }
