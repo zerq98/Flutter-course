@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learning_dart/constants/routes.dart';
 import 'package:learning_dart/views/login.dart';
 import 'package:learning_dart/views/notes.dart';
 import 'package:learning_dart/views/register.dart';
@@ -12,11 +13,11 @@ void main() {
     theme: ThemeData(primaryColor: Colors.black, backgroundColor: Colors.black),
     home: const HomeView(),
     routes: {
-      '/login/': (context) => const LoginView(),
-      '/register/': (context) => const RegisterView(),
-      '/home/': (context) => const HomeView(),
-      '/verify/': (context) => const VerifyEmailView(),
-      '/notes/': (context) => const NotesView(),
+      loginRoute: (context) => const LoginView(),
+      registerRoute: (context) => const RegisterView(),
+      homeRoute: (context) => const HomeView(),
+      verifyRoute: (context) => const VerifyEmailView(),
+      notesRoute: (context) => const NotesView(),
     },
   ));
 }
