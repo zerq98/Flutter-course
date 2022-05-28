@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:learning_dart/constants/routes.dart';
 import 'package:learning_dart/views/login.dart';
 import 'package:learning_dart/views/notes.dart';
 import 'package:learning_dart/views/verifyEmail.dart';
@@ -21,13 +22,13 @@ class HomeView extends StatelessWidget {
             if (user != null) {
               if (!user.emailVerified) {
                 Future.microtask(() => Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/verify/', (route) => false));
+                    .pushNamedAndRemoveUntil(verifyRoute, (route) => false));
                 return Text('');
               }
               return NotesView();
             } else {
               Future.microtask(() => Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/login/', (route) => false));
+                  .pushNamedAndRemoveUntil(loginRoute, (route) => false));
               return Text('');
             }
             break;

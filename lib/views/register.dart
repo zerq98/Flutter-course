@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:learning_dart/constants/routes.dart';
 import 'package:learning_dart/views/login.dart';
+import '../utilities/errorDialog.dart';
 import '/firebase_options.dart';
 
 class RegisterView extends StatefulWidget {
@@ -65,8 +67,8 @@ class _RegisterViewState extends State<RegisterView> {
                         .createUserWithEmailAndPassword(
                             email: email, password: password);
                     if (userCredential != null) {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil('/login/', (route) => false);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          loginRoute, (route) => false);
                     }
                   } on FirebaseAuthException catch (e) {
                     var error = '';
@@ -78,11 +80,9 @@ class _RegisterViewState extends State<RegisterView> {
                     } else if (e.code == 'invalid-email') {
                       error = 'Please provide a valid email address';
                     }
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                              content: Text(error),
-                            ));
+                    await showErrorDialog(context, error);
+                  } catch (e) {
+                    await showErrorDialog(context, e.toString());
                   }
                 },
                 child: Text("Register"),
@@ -90,7 +90,7 @@ class _RegisterViewState extends State<RegisterView> {
               TextButton(
                   onPressed: () {
                     Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/login/', (route) => false);
+                        .pushNamedAndRemoveUntil(loginRoute, (route) => false);
                   },
                   child: Text('Already have an account? Log in here!'))
             ],
