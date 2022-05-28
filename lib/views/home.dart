@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:learning_dart/views/login.dart';
+import 'package:learning_dart/views/verifyEmail.dart';
 import '../firebase_options.dart';
 
 class HomeView extends StatelessWidget {
@@ -12,7 +13,6 @@ class HomeView extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text('Home'),
-          backgroundColor: Colors.black,
         ),
         body: FutureBuilder(
           future: Firebase.initializeApp(
@@ -21,15 +21,38 @@ class HomeView extends StatelessWidget {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
                 var user = FirebaseAuth.instance.currentUser;
-
                 if (user != null) {
-                  return Text('Home');
+                  if (!user.emailVerified) {
+                    Future.microtask(() => Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/verify/', (route) => false));
+                    return Text('');
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 100.0),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          Text('Home page'),
+                          TextButton(
+                              onPressed: () {
+                                FirebaseAuth.instance.signOut();
+                                Future.microtask(() => Navigator.of(context)
+                                    .pushNamedAndRemoveUntil(
+                                        '/login/', (route) => false));
+                              },
+                              child: Text('Sign out'))
+                        ],
+                      ),
+                    ),
+                  );
                 } else {
-                  return LoginView();
+                  Future.microtask(() => Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/login/', (route) => false));
+                  return Text('');
                 }
                 break;
               default:
-                return const Text('Loading...');
+                return const CircularProgressIndicator();
             }
           },
         ));
