@@ -1,9 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:learning_dart/constants/routes.dart';
-import 'package:learning_dart/views/notes.dart';
-import '../firebase_options.dart';
+import 'package:learning_dart/services/auth/authService.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -11,20 +8,20 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform),
+      future: AuthService.firebase().initialize(),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
-            var user = FirebaseAuth.instance.currentUser;
+            var user = AuthService.firebase().currentUser;
             if (user != null) {
-              if (!user.emailVerified) {
-                user.sendEmailVerification();
+              if (!user.isEmailVerified) {
                 Future.microtask(() => Navigator.of(context)
                     .pushNamedAndRemoveUntil(verifyRoute, (route) => false));
                 return Text('');
               }
-              return NotesView();
+              Future.microtask(() => Navigator.of(context)
+                  .pushNamedAndRemoveUntil(notesRoute, (route) => false));
+              return Text('');
             } else {
               Future.microtask(() => Navigator.of(context)
                   .pushNamedAndRemoveUntil(loginRoute, (route) => false));

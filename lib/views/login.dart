@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:learning_dart/constants/routes.dart';
+import 'package:learning_dart/services/auth/authExceptions.dart';
+import 'package:learning_dart/services/auth/authService.dart';
 import '../utilities/errorDialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -60,30 +61,26 @@ class _LoginViewState extends State<LoginView> {
                   final password = _password.text;
 
                   try {
-                    final userCredential = await FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
-                            email: email, password: password);
-                    if (userCredential != null) {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil(homeRoute, (route) => false);
+                    await AuthService.firebase()
+                        .logIn(email: email, password: password);
+                    final user = await AuthService.firebase().currentUser;
+                    if (user != null) {
+                      if (user.isEmailVerified) {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            homeRoute, (route) => false);
+                      } else {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            verifyRoute, (route) => false);
+                      }
                     }
-                  } on FirebaseAuthException catch (e) {
-                    String error = '';
-                    switch (e.code) {
-                      case 'user-not-found':
-                        error = 'User not found';
-                        break;
-                      case 'invalid-email':
-                      case 'wrong-password':
-                        error = 'Wrong email or password';
-                        break;
-                      case 'user-disabled':
-                        error = 'Account with that address email is disabled';
-                        break;
-                    }
-                    await showErrorDialog(context, error);
+                  } on WrongPasswordAuthException catch (e) {
+                    await showErrorDialog(
+                        context, 'Wrong username or password');
+                  } on UserNotFoundAuthException catch (e) {
+                    await showErrorDialog(
+                        context, 'User with that login not found');
                   } catch (e) {
-                    await showErrorDialog(context, e.toString());
+                    await showErrorDialog(context, 'Authentication error');
                   }
                 },
                 child: Text("Login"),
