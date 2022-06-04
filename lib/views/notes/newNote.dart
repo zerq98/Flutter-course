@@ -26,7 +26,8 @@ class _NewNoteViewState extends State<NewNoteView> {
     final email = currentUser.email!;
     final owner = await _notesService.getUser(email: email);
 
-    return await _notesService.createNote(owner: owner);
+    _note = await _notesService.createNote(owner: owner);
+    return _note!;
   }
 
   Future<void> _deleteNoteIfTextIsEmpty() async {
