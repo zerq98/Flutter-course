@@ -94,7 +94,7 @@ class MockAuthProvider implements AuthProvider {
     }
     if (email == 'foo@bar.com') throw UserNotFoundAuthException();
     if (password == 'foobar') throw WrongPasswordAuthException();
-    var user = AuthUser(isEmailVerified: false);
+    var user = AuthUser(email: email, isEmailVerified: false);
     _user = user;
     return Future.value(user);
   }
@@ -116,7 +116,7 @@ class MockAuthProvider implements AuthProvider {
     }
     final user = _user;
     if (_user == null) UserNotFoundAuthException();
-    var newUser = AuthUser(isEmailVerified: true);
+    var newUser = AuthUser(email: 'foobar@gmail.com', isEmailVerified: true);
     _user = newUser;
     await Future.delayed(const Duration(seconds: 1));
   }

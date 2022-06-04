@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:learning_dart/constants/routes.dart';
 import 'package:learning_dart/enums/menuActionEnum.dart';
 import 'package:learning_dart/services/auth/authService.dart';
+import 'package:learning_dart/services/crud/notesService.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({Key? key}) : super(key: key);
@@ -11,29 +12,23 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+  late final NotesService _notesService;
+  String get userEmail => AuthService.firebase().currentUser!.email!;
+  @override
+  void initState() {
+    _notesService = NotesService();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _notesService.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // drawer: Drawer(
-      //   child: ListView(
-      //     padding: EdgeInsets.zero,
-      //     children: [
-      //       DrawerHeader(child: Text('')),
-      //       ListTile(
-      //         title: const Text('Item 1'),
-      //         onTap: () {},
-      //       ),
-      //       ListTile(
-      //         title: const Text('Sign out'),
-      //         onTap: () {
-      //           FirebaseAuth.instance.signOut();
-      //           Navigator.of(context)
-      //               .pushNamedAndRemoveUntil('/login/', (route) => false);
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
       appBar: AppBar(
         title: Text('My notes'),
         actions: [
@@ -58,7 +53,27 @@ class _NotesViewState extends State<NotesView> {
           )
         ],
       ),
-      body: Text('Notes'),
+      body: FutureBuilder(
+          future: _notesService.getOrCreateUser(email: userEmail),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return StreamBuilder(
+                stream: _notesService.allNotes,
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return Text('Waiting for notes...');
+                    // case ConnectionState.done:
+                    //   // TODO: Handle this case.
+                    default:
+                      return CircularProgressIndicator();
+                  }
+                },
+              );
+            }
+
+            return CircularProgressIndicator();
+          }),
     );
   }
 }
