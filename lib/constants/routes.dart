@@ -3,4 +3,4 @@ const registerRoute = '/register/';
 const verifyRoute = '/verify/';
 const homeRoute = '/home/';
 const notesRoute = '/notes/';
-const newNoteRoute = '/newNote/';
+const upsertNoteRoute = '/upsertNote/';

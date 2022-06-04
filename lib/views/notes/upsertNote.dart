@@ -4,20 +4,28 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:learning_dart/services/auth/authService.dart';
 import 'package:learning_dart/services/crud/notesService.dart';
+import 'package:learning_dart/utilities/generics/getArguments.dart';
 
-class NewNoteView extends StatefulWidget {
-  const NewNoteView({Key? key}) : super(key: key);
+class UpsertNoteView extends StatefulWidget {
+  const UpsertNoteView({Key? key}) : super(key: key);
 
   @override
-  State<NewNoteView> createState() => _NewNoteViewState();
+  State<UpsertNoteView> createState() => _UpsertNoteViewState();
 }
 
-class _NewNoteViewState extends State<NewNoteView> {
+class _UpsertNoteViewState extends State<UpsertNoteView> {
   DatabaseNote? _note;
   late final NotesService _notesService;
   late final TextEditingController _textController;
 
-  Future<DatabaseNote> createNewNote() async {
+  Future<DatabaseNote> createOrGetNote(BuildContext context) async {
+    final widgetNote = context.getArgument<DatabaseNote>();
+
+    if (widgetNote != null) {
+      _note = widgetNote;
+      _textController.text = widgetNote.text;
+      return widgetNote;
+    }
     final existingNote = _note;
     if (existingNote != null) {
       return existingNote;
@@ -26,8 +34,9 @@ class _NewNoteViewState extends State<NewNoteView> {
     final email = currentUser.email!;
     final owner = await _notesService.getUser(email: email);
 
-    _note = await _notesService.createNote(owner: owner);
-    return _note!;
+    final newNote = await _notesService.createNote(owner: owner);
+    _note = newNote;
+    return newNote;
   }
 
   Future<void> _deleteNoteIfTextIsEmpty() async {
@@ -77,9 +86,9 @@ class _NewNoteViewState extends State<NewNoteView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('New note')),
+      appBar: AppBar(title: const Text('Note details')),
       body: FutureBuilder(
-        future: createNewNote(),
+        future: createOrGetNote(context),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:

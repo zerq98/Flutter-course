@@ -34,7 +34,7 @@ class _NotesViewState extends State<NotesView> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(newNoteRoute);
+          Navigator.of(context).pushNamed(upsertNoteRoute);
         },
         child: const Icon(
           Icons.add,
@@ -57,7 +57,7 @@ class _NotesViewState extends State<NotesView> {
                   }
                   break;
                 case MenuAction.add:
-                  Navigator.of(context).pushNamed(newNoteRoute);
+                  Navigator.of(context).pushNamed(upsertNoteRoute);
                   break;
               }
             },
@@ -84,6 +84,10 @@ class _NotesViewState extends State<NotesView> {
                         final allNotes = snapshot.data as List<DatabaseNote>;
                         return NotesListView(
                             notes: allNotes,
+                            onTap: (note) {
+                              Navigator.of(context)
+                                  .pushNamed(upsertNoteRoute, arguments: note);
+                            },
                             onDeleteNote: (note) async {
                               await _notesService.deleteNote(id: note.id);
                             });
