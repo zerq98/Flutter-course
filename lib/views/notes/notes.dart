@@ -29,6 +29,16 @@ class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(newNoteRoute);
+        },
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       appBar: AppBar(
         title: Text('My notes'),
         actions: [
@@ -43,10 +53,14 @@ class _NotesViewState extends State<NotesView> {
                         .pushNamedAndRemoveUntil(loginRoute, (route) => false);
                   }
                   break;
+                case MenuAction.add:
+                  // TODO: Handle this case.
+                  break;
               }
             },
             itemBuilder: (context) {
               return const [
+                PopupMenuItem(value: MenuAction.add, child: Text('Add note')),
                 PopupMenuItem(value: MenuAction.logout, child: Text('Logout')),
               ];
             },
@@ -62,6 +76,7 @@ class _NotesViewState extends State<NotesView> {
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
+                    case ConnectionState.active:
                       return Text('Waiting for notes...');
                     // case ConnectionState.done:
                     //   // TODO: Handle this case.
