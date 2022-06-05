@@ -29,6 +29,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                   await AuthService.firebase().sendEmailVerification();
                 }
                 await AuthService.firebase().logOut();
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(loginRoute, (route) => false);
               },
               child: Text('Send email verification'),
             ),
